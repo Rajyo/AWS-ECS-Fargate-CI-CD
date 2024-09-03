@@ -15,6 +15,9 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./express-server
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -31,41 +34,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./express-server/Dockerfile
+          context: ./express-server/
+          platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/express-server-1:latest
 
-  build-infra:
-    name: aws-alb-ecs-terraform
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        id: init
-        working-directory: ./AWS-ALB-ECS/
-        run: terraform init
-
-      - name: Terraform Validate
-        id: validate
-        working-directory: ./AWS-ALB-ECS/
-        run: terraform validate
-
-      - name: Terraform Plan
-        id: plan
-        working-directory: ./AWS-ALB-ECS/
-        run: terraform plan
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        id: apply
-        working-directory: ./AWS-ALB-ECS/
-        run: terraform apply --auto-approve
