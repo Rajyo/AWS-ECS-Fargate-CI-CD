@@ -1,8 +1,9 @@
 module "vpc" {
-  source             = "./module/vpc"
-  vpc_cidr           = var.vpc_cidr
-  availability_zones = var.availability_zones
+  source               = "./module/vpc"
+  vpc_cidr             = var.vpc_cidr
+  availability_zones   = var.availability_zones
   private_subnets_cidr = var.private_subnets_cidr
+  public_subnets_cidr  = var.public_subnets_cidr
 }
 
 module "sg" {
@@ -35,6 +36,6 @@ module "asg" {
 module "alb" {
   source            = "./module/alb"
   vpc_id            = module.vpc.vpc_id
-  private_subnet_id = module.vpc.private_subnet_id
+  public_subnet_id  = module.vpc.public_subnet_id
   security_group_id = module.sg.security_group_id
 }

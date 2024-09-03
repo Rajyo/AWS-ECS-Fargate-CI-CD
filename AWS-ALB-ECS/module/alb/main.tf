@@ -1,5 +1,5 @@
 variable "vpc_id" {}
-variable "private_subnet_id" {}
+variable "public_subnet_id" {}
 variable "security_group_id" {}
 
 
@@ -29,7 +29,7 @@ resource "aws_lb" "web_server_load_balancer" {
   name               = "aws-cql-load-balancer"
   internal           = false
   load_balancer_type = "application"
-  subnets            = var.private_subnet_id
+  subnets            = var.public_subnet_id
   security_groups    = [var.security_group_id]
 
   tags = {
